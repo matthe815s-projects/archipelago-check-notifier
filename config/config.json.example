@@ -1,3 +1,9 @@
 {
-    
+    "token": "",
+    "database": {
+        "host": "",
+        "user": "",
+        "password": "",
+        "database": ""
+    }
 }
