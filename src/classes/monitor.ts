@@ -51,9 +51,9 @@ export default class Monitor {
   }
 
   sendQueue () {
-    const fields = this.queue.map((message) => ({ name: '\u200b', value: message }))
+    const fields = this.queue.map((message, index) => ({ name: `#${index}`, value: message }))
     this.queue = []
-    const message = new EmbedBuilder().setTitle('Archipelago').addFields(fields).data
+    const message = new EmbedBuilder().setTitle('Hints').addFields(fields).data
     this.channel.send({ embeds: [message] })
   }
 
