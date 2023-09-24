@@ -24,7 +24,7 @@ export type Connection = {
   channel: string
 }
 
-function getConnections () {
+function getConnections (): Promise<Connection[]> {
   return new Promise((resolve, reject) => {
     connection.query('SELECT * FROM connections', (err: MysqlError, results: Connection[]) => {
       if (err) reject(err)

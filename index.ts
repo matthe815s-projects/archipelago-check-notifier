@@ -1,31 +1,26 @@
 import { Client, Events, InteractionType } from 'discord.js'
 import Commands from './src/commands'
-import Database from './src/utils/database'
+import Database, { Connection } from './src/utils/database'
 import Monitors from './src/utils/monitors'
+
 const client = new Client({ intents: ['Guilds'] })
 const CONFIG = require('./config/config.json')
 
-client.on(Events.ClientReady, () => {
-  console.log('I am ready!')
+client.on(Events.ClientReady, async () => {
   Database.migrate()
-  Commands.Init(client)
+  Commands.init(client)
 
-  Database.getConnections().then((results: any) => {
-    results.forEach((result: any) => {
-      Monitors.make(result, client)
-    })
-  })
+  // Reconnect to all monitors
+  const connections: Connection[] = await Database.getConnections()
+  connections.forEach((result: any) => Monitors.make(result, client))
 })
 
 client.on(Events.InteractionCreate, async (interaction) => {
   switch (interaction.type) {
-    case InteractionType.ApplicationCommandAutocomplete:
-      if (interaction.commandName === 'unmonitor') {
-        if (interaction.guildId == null) return
-        interaction.respond(Monitors.get(interaction.guildId).map(monitor => ({ name: monitor.client.uri || '', value: monitor.client.uri || '' })))
-      }
+    case InteractionType.ApplicationCommandAutocomplete: // Auto complete interaction
+      Commands.Autocomplete(interaction)
       break
-    case InteractionType.ApplicationCommand:
+    case InteractionType.ApplicationCommand: // Slash command interaction
       Commands.Execute(interaction)
       break
   }

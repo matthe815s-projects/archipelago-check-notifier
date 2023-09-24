@@ -1,5 +1,5 @@
 import Command from '../classes/command'
-import { ApplicationCommandOption, ApplicationCommandOptionType, CommandInteraction } from 'discord.js'
+import { ApplicationCommandOption, ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from 'discord.js'
 import Monitors from '../utils/monitors'
 
 export default class UnmonitorCommand extends Command {
@@ -23,5 +23,10 @@ export default class UnmonitorCommand extends Command {
 
     Monitors.remove(interaction.options.data[0].value as string)
     interaction.reply({ content: `The tracker will no longer track ${interaction.options.data[0].value}.`, ephemeral: true })
+  }
+
+  autocomplete (interaction: AutocompleteInteraction): void {
+    if (interaction.guildId == null) return
+    interaction.respond(Monitors.get(interaction.guildId).map(monitor => ({ name: monitor.client.uri || '', value: monitor.client.uri || '' })))
   }
 }
