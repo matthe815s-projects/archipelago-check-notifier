@@ -59,8 +59,10 @@ export default class Monitor {
       switch (packet.type) {
         case 'Collect':
         case 'ItemSend':
-        case 'Hint':
           this.send(this.convertData(packet), 'Item Sent')
+          break
+        case 'Hint':
+          this.send(this.convertData(packet), 'Hint')
           break
         case 'Join':
           if (packet.tags.includes('Monitor')) {
