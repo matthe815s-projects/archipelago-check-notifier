@@ -20,8 +20,7 @@ function make (data: MonitorData, client: DiscordClient): Promise<Monitor> {
 
     archi.connect(connectionInfo).then(() => {
       const monitor = new Monitor(archi, data, client)
-      console.log(`Connected to ${data.host}`)
-
+      Database.createLog(monitor.guild.id, '0', `Connected to ${data.host}:${data.port}`)
       monitors.push(monitor)
       resolve(monitor)
     }).catch((err) => { console.log(err) })
@@ -34,7 +33,7 @@ function remove (host: string) {
   monitors.splice(monitors.indexOf(monitor), 1)
   monitor.client.disconnect()
   Database.removeConnection(monitor)
-  console.log(`Removed monitor for ${host}`)
+  Database.createLog(monitor.guild.id, '0', `Disconnected from ${monitor.data.host}:${monitor.data.port}`)
 }
 
 function has (host: string) {
