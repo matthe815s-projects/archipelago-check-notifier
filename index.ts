@@ -1,7 +1,8 @@
 import { Client, Events, InteractionType } from 'discord.js'
 import Commands from './src/commands'
-import Database, { Connection } from './src/utils/database'
+import Database from './src/utils/database'
 import Monitors from './src/utils/monitors'
+import { Connection } from './src/classes/connection'
 
 const client = new Client({ intents: ['Guilds'] })
 const CONFIG = require('./config/config.json')

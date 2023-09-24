@@ -1,12 +1,12 @@
 import MonitorData from '../classes/monitordata'
 import { Client, ConnectionInformation, ITEMS_HANDLING_FLAGS } from 'archipelago.js'
 import Monitor from '../classes/monitor'
-import { TextBasedChannel, Client as DiscordClient, GuildChannel } from 'discord.js'
+import { Client as DiscordClient } from 'discord.js'
 import Database from './database'
 
 const monitors: Monitor[] = []
 
-function make (data: MonitorData, client: DiscordClient, first: boolean = false) {
+function make (data: MonitorData, client: DiscordClient) {
   const archi = new Client()
   const connectionInfo: ConnectionInformation = {
     hostname: data.host,
@@ -19,14 +19,7 @@ function make (data: MonitorData, client: DiscordClient, first: boolean = false)
 
   archi.connect(connectionInfo).then(() => {
     console.log('Connected to Archipelago')
-
-    // If there's no channel just disconnect
-    if (first) {
-      (client.channels.cache.get(data.channel) as TextBasedChannel).send('This monitor will now track Archipelago on this channel.')
-      Database.makeConnection(data.host, data.port, data.game, data.player, data.channel)
-    }
-
-    monitors.push(new Monitor(archi, data, client.channels.cache.get(data.channel) as TextBasedChannel, (client.channels.cache.get(data.channel) as GuildChannel).guild))
+    monitors.push(new Monitor(archi, data, client))
   }).catch((err) => { console.log(err) })
 }
 

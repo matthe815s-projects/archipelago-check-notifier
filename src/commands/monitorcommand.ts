@@ -1,7 +1,8 @@
 import Command from '../classes/command'
-import { ApplicationCommandOption, ApplicationCommandOptionType, ChannelType, CommandInteraction } from 'discord.js'
+import { ApplicationCommandOption, ApplicationCommandOptionType, ChannelType, CommandInteraction, TextBasedChannel } from 'discord.js'
 import MonitorData from '../classes/monitordata'
 import Monitors from '../utils/monitors'
+import Database from '../utils/database'
 
 export default class MonitorCommand extends Command {
   name = 'monitor'
@@ -26,7 +27,7 @@ export default class MonitorCommand extends Command {
 
     // regex for domain or IP
     const hostRegex = /^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.)+[a-z]{2,}$/i
-    if (!hostRegex.test(host)) { interaction.reply('Invalid host format. Please use domain name (e.g: archipelago.gg)'); return false }
+    if (!hostRegex.test(host)) { interaction.reply('Invalid host name format. Please use domain name (e.g: archipelago.gg)'); return false }
 
     // test data 4 for proper channel
     const channel = interaction.options.data[4].channel
@@ -55,7 +56,13 @@ export default class MonitorCommand extends Command {
       channel: interaction.options.get('channel', true).channel?.id as string
     }
 
-    Monitors.make(monitorData, this.client, true)
+    // Send a message to the channel to confirm the monitor has been added.
+    const textChannel: TextBasedChannel = this.client.channels.cache.get(monitorData.channel) as TextBasedChannel
+    textChannel.send('This monitor will now track Archipelago on this channel.')
+
+    Monitors.make(monitorData, this.client)
+    Database.makeConnection(monitorData)
+
     interaction.reply({ content: `Now monitoring Archipelago on ${monitorData.host}:${monitorData.port}.`, ephemeral: true })
   }
 }
