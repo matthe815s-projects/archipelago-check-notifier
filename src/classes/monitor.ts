@@ -51,20 +51,10 @@ export default class Monitor {
   }
 
   sendQueue () {
-    const messages: string[] = []
-    this.queue.forEach((message) => {
-      if (messages.length === 0) {
-        messages.push(message)
-        return
-      }
-      if (messages[messages.length - 1].length + message.length > 4096) {
-        messages.push(message)
-        return
-      }
-      messages[messages.length - 1] += `\n${message}`
-    })
+    const fields = this.queue.map((message) => ({ name: '\u200b', value: message }))
     this.queue = []
-    messages.forEach((message) => this.send(message))
+    const message = new EmbedBuilder().setTitle('Archipelago').addFields(fields).data
+    this.channel.send({ embeds: [message] })
   }
 
   send (message: string) {
