@@ -9,6 +9,8 @@ export default class Monitor {
   guild: Guild
   data: MonitorData
 
+  queue: string[] = []
+
   getItemName (playerId: number, itemId: number) {
     const game = this.client.players.get(playerId)?.game
     if (game == null) return null
@@ -43,9 +45,31 @@ export default class Monitor {
     }).join(' ')
   }
 
-  send (message: string, type: string = 'text') {
+  addQueue (message: string) {
+    if (this.queue.length === 0) setTimeout(() => this.sendQueue(), 150)
+    this.queue.push(message)
+  }
+
+  sendQueue () {
+    const messages: string[] = []
+    this.queue.forEach((message) => {
+      if (messages.length === 0) {
+        messages.push(message)
+        return
+      }
+      if (messages[messages.length - 1].length + message.length > 4096) {
+        messages.push(message)
+        return
+      }
+      messages[messages.length - 1] += `\n${message}`
+    })
+    this.queue = []
+    messages.forEach((message) => this.send(message))
+  }
+
+  send (message: string) {
     // make an embed for the message
-    const embed = new EmbedBuilder().setDescription(message).setTitle(type)
+    const embed = new EmbedBuilder().setDescription(message).setTitle('Archipelago')
     this.channel.send({ embeds: [embed.data] })
   }
 
@@ -59,23 +83,23 @@ export default class Monitor {
       switch (packet.type) {
         case 'Collect':
         case 'ItemSend':
-          this.send(this.convertData(packet), 'Item Sent')
+          this.send(this.convertData(packet))
           break
         case 'Hint':
-          this.send(this.convertData(packet), 'Hint')
+          this.addQueue(this.convertData(packet))
           break
         case 'Join':
           if (packet.tags.includes('Monitor')) {
             return
           }
           if (packet.tags.includes('IgnoreGame')) {
-            this.send(`A tracker for **${client.players.get(packet.slot)?.name}** has joined the game!`, 'Tracker Joined')
+            this.send(`A tracker for **${client.players.get(packet.slot)?.name}** has joined the game!`)
             return
           }
-          this.send(`**${client.players.get(packet.slot)?.name}** (${client.players.get(packet.slot)?.game}) joined the game!`, 'Player Joined')
+          this.send(`**${client.players.get(packet.slot)?.name}** (${client.players.get(packet.slot)?.game}) joined the game!`)
           break
         case 'Part':
-          this.send(`**${client.players.get(packet.slot)?.name}** (${client.players.get(packet.slot)?.game}) left the game!`, 'Player Left')
+          this.send(`**${client.players.get(packet.slot)?.name}** (${client.players.get(packet.slot)?.game}) left the game!`)
           break
       }
     })
