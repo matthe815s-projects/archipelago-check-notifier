@@ -1,4 +1,4 @@
-import { Client, Events, InteractionType } from 'discord.js'
+import { Client, Events, InteractionType, TextBasedChannel } from 'discord.js'
 import Commands from './src/commands'
 import Database from './src/utils/database'
 import Monitors from './src/utils/monitors'
@@ -31,6 +31,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 client.on(Events.GuildCreate, async (guild) => {
   // Add the guild to the database
   await Database.createLog(guild.id, '0', 'Added to guild')
+
+  // Document to the logs channel
+  const channel = client.channels.cache.get(CONFIG.logs.channel) as TextBasedChannel
+  channel.send(`Added to guild ${guild.name}`)
 })
 
 client.on(Events.GuildDelete, async (guild) => {
