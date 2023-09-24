@@ -2,7 +2,6 @@ import Command from '../classes/command'
 import { ApplicationCommandOption, ApplicationCommandOptionType, CommandInteraction } from 'discord.js'
 import MonitorData from '../classes/monitordata'
 import Monitors from '../utils/monitors'
-import Database from '../utils/database'
 
 export default class MonitorCommand extends Command {
   name = 'monitor'
@@ -36,8 +35,7 @@ export default class MonitorCommand extends Command {
       channel: interaction.options.data[4].channel.id as string
     }
 
-    Monitors.make(monitorData, this.client)
-    Database.makeConnection(monitorData.host, monitorData.port, monitorData.game, monitorData.player, monitorData.channel)
-    interaction.reply({ content: 'Now monitoring your game!', ephemeral: true })
+    Monitors.make(monitorData, this.client, true)
+    interaction.reply({ content: `Now monitoring Archipelago on ${monitorData.host}:${monitorData.port}.`, ephemeral: true })
   }
 }

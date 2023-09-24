@@ -6,7 +6,7 @@ import Database from './database'
 
 const monitors: Monitor[] = []
 
-function make (data: MonitorData, client: DiscordClient) {
+function make (data: MonitorData, client: DiscordClient, first: boolean = false) {
   const archi = new Client()
   const connectionInfo: ConnectionInformation = {
     hostname: data.host,
@@ -19,9 +19,15 @@ function make (data: MonitorData, client: DiscordClient) {
 
   archi.connect(connectionInfo).then(() => {
     console.log('Connected to Archipelago')
+
     // If there's no channel just disconnect
+    if (first) {
+      (client.channels.cache.get(data.channel) as TextBasedChannel).send('This monitor will now track Archipelago on this channel.')
+      Database.makeConnection(data.host, data.port, data.game, data.player, data.channel)
+    }
+
     monitors.push(new Monitor(archi, data, client.channels.cache.get(data.channel) as TextBasedChannel, (client.channels.cache.get(data.channel) as GuildChannel).guild))
-  })
+  }).catch((err) => { console.log(err) })
 }
 
 function remove (host: string) {

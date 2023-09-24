@@ -15,7 +15,13 @@ export default class UnmonitorCommand extends Command {
   }
 
   execute (interaction: CommandInteraction) {
+    // Do not remove if there is no monitor
+    if (!Monitors.has(interaction.options.data[0].value as string)) {
+      interaction.reply({ content: `There is no active monitor on ${interaction.options.data[0].value}.`, ephemeral: true })
+      return
+    }
+
     Monitors.remove(interaction.options.data[0].value as string)
-    interaction.reply({ content: 'Removed monitor!', ephemeral: true })
+    interaction.reply({ content: `The tracker will no longer track ${interaction.options.data[0].value}.`, ephemeral: true })
   }
 }

@@ -63,7 +63,6 @@ export default class Monitor {
           break
         case 'Join':
           if (packet.tags.includes('Monitor')) {
-            this.send('This monitor has begun tracking!', 'Monitor')
             return
           }
           if (packet.tags.includes('IgnoreGame')) {
