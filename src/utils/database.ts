@@ -18,6 +18,11 @@ connection.connect()
  */
 async function migrate (): Promise<void> {
   await connection.query('CREATE TABLE IF NOT EXISTS connections (id INT AUTO_INCREMENT PRIMARY KEY, host VARCHAR(255), port INT, game VARCHAR(255), player VARCHAR(255), channel VARCHAR(255))')
+  await connection.query('CREATE TABLE IF NOT EXISTS activity_log (id INT AUTO_INCREMENT PRIMARY KEY, guild_id VARCHAR(255), user_id VARCHAR(255), action VARCHAR(255), timestamp DATETIME)')
+}
+
+async function createLog (guildId: string, userId: string, action: string) {
+  await connection.query('INSERT INTO activity_log (guild_id, user_id, action, timestamp) VALUES (?, ?, ?, NOW())', [guildId, userId, action])
 }
 
 function getConnections (): Promise<Connection[]> {
@@ -61,6 +66,7 @@ const Database = {
   getConnections,
   makeConnection,
   removeConnection,
+  createLog,
   migrate
 }
 

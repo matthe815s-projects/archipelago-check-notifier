@@ -23,8 +23,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
       break
     case InteractionType.ApplicationCommand: // Slash command interaction
       Commands.Execute(interaction)
+      Database.createLog(interaction.guildId || '0', interaction.user.id, `Executed command ${interaction.commandName}`)
       break
   }
+})
+
+client.on(Events.GuildCreate, async (guild) => {
+  // Add the guild to the database
+  await Database.createLog(guild.id, '0', 'Added to guild')
+})
+
+client.on(Events.GuildDelete, async (guild) => {
+  // Remove the guild from the database
+  await Database.createLog(guild.id, '0', 'Removed from guild')
 })
 
 client.login(CONFIG.token)
