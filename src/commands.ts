@@ -2,6 +2,7 @@ import { AutocompleteInteraction, Client, CommandInteraction, REST, Routes } fro
 import MonitorCommand from './commands/monitorcommand'
 import UnmonitorCommand from './commands/unmonitorcommand'
 import Command from './classes/command'
+import PingCommand from './commands/pingcommand'
 let restClient: REST
 
 const commandList: Command[] = [
@@ -12,6 +13,7 @@ const debugCommandList: Command[] = [
 ]
 
 function Init (client: Client) {
+  commandList.push(new PingCommand(client))
   commandList.push(new MonitorCommand(client))
   commandList.push(new UnmonitorCommand(client))
 
