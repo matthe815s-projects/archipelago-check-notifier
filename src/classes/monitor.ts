@@ -1,5 +1,5 @@
 import { EmbedBuilder, Guild, TextBasedChannel } from 'discord.js'
-import { Client, CollectJSONPacket, ItemSendJSONPacket, SERVER_PACKET_TYPE, SlotData } from 'archipelago.js'
+import { Client, CollectJSONPacket, HintJSONPacket, ItemSendJSONPacket, SERVER_PACKET_TYPE, SlotData } from 'archipelago.js'
 import MonitorData from './monitordata'
 const dataPackage = require('../../datapackage.json')
 
@@ -28,7 +28,7 @@ export default class Monitor {
     return location?.[0]
   }
 
-  convertData (message: ItemSendJSONPacket | CollectJSONPacket) {
+  convertData (message: ItemSendJSONPacket | CollectJSONPacket | HintJSONPacket) {
     return message.data.map((slot) => {
       switch (slot.type) {
         case 'player_id':
@@ -59,6 +59,7 @@ export default class Monitor {
       switch (packet.type) {
         case 'Collect':
         case 'ItemSend':
+        case 'Hint':
           this.send(this.convertData(packet), 'Item Sent')
           break
         case 'Join':
