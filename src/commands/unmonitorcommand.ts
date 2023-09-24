@@ -4,9 +4,10 @@ import Monitors from '../utils/monitors'
 
 export default class UnmonitorCommand extends Command {
   name = 'unmonitor'
+  description = 'Stop tracking an archipelago session.'
 
   options: ApplicationCommandOption[] = [
-    { type: ApplicationCommandOptionType.String, name: 'host', description: 'The host to remove', required: true, autocomplete: true }
+    { type: ApplicationCommandOptionType.String, name: 'uri', description: 'The URI of the archipelago room to remove.', required: true, autocomplete: true }
   ]
 
   constructor (client: any) {

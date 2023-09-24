@@ -5,6 +5,7 @@ import Monitors from '../utils/monitors'
 
 export default class MonitorCommand extends Command {
   name = 'monitor'
+  description = 'Start tracking an archipelago session.'
 
   options: ApplicationCommandOption[] = [
     { type: ApplicationCommandOptionType.String, name: 'game', description: 'The game to monitor', required: true },
@@ -50,11 +51,11 @@ export default class MonitorCommand extends Command {
     }
 
     const monitorData: MonitorData = {
-      game: interaction.options.data[0].value as string,
-      player: interaction.options.data[1].value as string,
-      host: interaction.options.data[2].value as string,
-      port: interaction.options.data[3].value as number,
-      channel: interaction.options.data[4].channel.id as string
+      game: interaction.options.get('game', true).value as string,
+      player: interaction.options.get('player', true).value as string,
+      host: interaction.options.get('host', true).value as string,
+      port: interaction.options.get('port', true).value as number,
+      channel: interaction.options.get('channel', true).channel?.id as string
     }
 
     Monitors.make(monitorData, this.client, true)

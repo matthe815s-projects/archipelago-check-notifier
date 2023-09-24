@@ -2,7 +2,9 @@ import { ApplicationCommandOption, AutocompleteInteraction, Client, CommandInter
 
 export default class Command {
   name: string
+  description: string
   options: ApplicationCommandOption[]
+
   client: Client
 
   execute (interaction: CommandInteraction) {
