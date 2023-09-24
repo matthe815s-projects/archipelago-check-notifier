@@ -1,4 +1,5 @@
 import { MysqlError, createConnection } from 'mysql'
+import Monitor from '../classes/monitor'
 const config = require('../../config/config.json')
 
 const connection = createConnection({
@@ -41,9 +42,19 @@ function makeConnection (host: string, port: number, game: string, player: strin
   })
 }
 
+function removeConnection (monitor: Monitor) {
+  return new Promise((resolve, reject) => {
+    connection.query('DELETE FROM connections WHERE host = ? AND port = ? AND game = ? AND player = ? AND channel = ?', [monitor.data.host, monitor.data.port, monitor.data.game, monitor.data.player, monitor.channel.id], (err, results) => {
+      if (err) reject(err)
+      resolve(results)
+    })
+  })
+}
+
 const Database = {
   getConnections,
   makeConnection,
+  removeConnection,
   migrate
 }
 

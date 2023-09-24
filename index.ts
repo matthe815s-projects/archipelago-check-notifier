@@ -1,7 +1,7 @@
-import { Client, Events } from 'discord.js'
+import { Client, Events, InteractionType } from 'discord.js'
 import Commands from './src/commands'
 import Database from './src/utils/database'
-import MonitorCommand from './src/commands/monitorcommand'
+import Monitors from './src/utils/monitors'
 const client = new Client({ intents: ['Guilds'] })
 const CONFIG = require('./config/config.json')
 
@@ -12,14 +12,23 @@ client.on(Events.ClientReady, () => {
 
   Database.getConnections().then((results: any) => {
     results.forEach((result: any) => {
-      new MonitorCommand(client).makeMonitor(result)
+      Monitors.make(result, client)
     })
   })
 })
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isCommand()) return
-  Commands.Execute(interaction)
+  switch (interaction.type) {
+    case InteractionType.ApplicationCommandAutocomplete:
+      if (interaction.commandName === 'unmonitor') {
+        if (interaction.guildId == null) return
+        interaction.respond(Monitors.get(interaction.guildId).map(monitor => ({ name: monitor.client.uri || '', value: monitor.client.uri || '' })))
+      }
+      break
+    case InteractionType.ApplicationCommand:
+      Commands.Execute(interaction)
+      break
+  }
 })
 
 client.login(CONFIG.token)

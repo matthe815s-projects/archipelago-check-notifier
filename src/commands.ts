@@ -1,21 +1,22 @@
 import { Client, CommandInteraction, REST, Routes } from 'discord.js'
-import TestCommand from './commands/testcommand'
 import MonitorCommand from './commands/monitorcommand'
+import UnmonitorCommand from './commands/unmonitorcommand'
+import Command from './classes/command'
 let restClient: REST
 
-const commandList = [
-  new TestCommand()
+const commandList: Command[] = [
 ]
 
 function Init (client: Client) {
   commandList.push(new MonitorCommand(client))
+  commandList.push(new UnmonitorCommand(client))
   if (client.token == null || client.application == null) return
 
   restClient = new REST({ version: '10' }).setToken(client.token)
   restClient.put(Routes.applicationCommands(client.application?.id), { body: [] })
 
   // Register slash commands with Discord.js rest
-  restClient.put(Routes.applicationGuildCommands(client.application?.id, '606926504424767488'), { body: GetCommands() })
+  restClient.put(Routes.applicationCommands(client.application?.id), { body: GetCommands() })
 }
 
 function GetCommands () {

@@ -1,10 +1,13 @@
-import { EmbedBuilder, TextBasedChannel } from 'discord.js'
+import { EmbedBuilder, Guild, TextBasedChannel } from 'discord.js'
 import { Client, CollectJSONPacket, ItemSendJSONPacket, SERVER_PACKET_TYPE, SlotData } from 'archipelago.js'
+import MonitorData from './monitordata'
 const dataPackage = require('../../datapackage.json')
 
 export default class Monitor {
   client: Client<SlotData>
   channel: TextBasedChannel
+  guild: Guild
+  data: MonitorData
 
   getItemName (playerId: number, itemId: number) {
     const game = this.client.players.get(playerId)?.game
@@ -46,9 +49,11 @@ export default class Monitor {
     this.channel.send({ embeds: [embed.data] })
   }
 
-  constructor (client: Client<SlotData>, channel: TextBasedChannel) {
+  constructor (client: Client<SlotData>, monitorData: MonitorData, channel: TextBasedChannel, guild: Guild) {
     this.client = client
     this.channel = channel
+    this.guild = guild
+    this.data = monitorData
 
     client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, (packet) => {
       switch (packet.type) {
