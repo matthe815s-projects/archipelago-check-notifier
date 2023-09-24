@@ -6,21 +6,25 @@ import Database from './database'
 
 const monitors: Monitor[] = []
 
-function make (data: MonitorData, client: DiscordClient) {
-  const archi = new Client()
-  const connectionInfo: ConnectionInformation = {
-    hostname: data.host,
-    port: data.port,
-    game: data.game,
-    name: data.player,
-    items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL,
-    tags: ['IgnoreGame', 'Tracker', 'Monitor']
-  }
+function make (data: MonitorData, client: DiscordClient): Promise<Monitor> {
+  return new Promise<Monitor>((resolve, reject) => {
+    const archi = new Client()
+    const connectionInfo: ConnectionInformation = {
+      hostname: data.host,
+      port: data.port,
+      game: data.game,
+      name: data.player,
+      items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL,
+      tags: ['IgnoreGame', 'Tracker', 'Monitor']
+    }
 
-  archi.connect(connectionInfo).then(() => {
-    console.log('Connected to Archipelago')
-    monitors.push(new Monitor(archi, data, client))
-  }).catch((err) => { console.log(err) })
+    archi.connect(connectionInfo).then(() => {
+      const monitor = new Monitor(archi, data, client)
+
+      monitors.push(monitor)
+      resolve(monitor)
+    }).catch((err) => { console.log(err) })
+  })
 }
 
 function remove (host: string) {

@@ -60,8 +60,10 @@ export default class MonitorCommand extends Command {
     const textChannel: TextBasedChannel = this.client.channels.cache.get(monitorData.channel) as TextBasedChannel
     textChannel.send('This monitor will now track Archipelago on this channel.')
 
-    Monitors.make(monitorData, this.client)
-    Database.makeConnection(monitorData)
+    // Make the monitor and save it
+    Monitors.make(monitorData, this.client).then(() => {
+      Database.makeConnection(monitorData)
+    })
 
     interaction.reply({ content: `Now monitoring Archipelago on ${monitorData.host}:${monitorData.port}.`, ephemeral: true })
   }
