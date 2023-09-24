@@ -51,7 +51,7 @@ export default class Monitor {
   }
 
   sendQueue () {
-    const fields = this.queue.map((message, index) => ({ name: `#${index}`, value: message }))
+    const fields = this.queue.map((message, index) => ({ name: `#${index + 1}`, value: message }))
     this.queue = []
     const message = new EmbedBuilder().setTitle('Hints').addFields(fields).data
     this.channel.send({ embeds: [message] })
