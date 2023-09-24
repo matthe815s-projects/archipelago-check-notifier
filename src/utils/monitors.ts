@@ -20,6 +20,7 @@ function make (data: MonitorData, client: DiscordClient): Promise<Monitor> {
 
     archi.connect(connectionInfo).then(() => {
       const monitor = new Monitor(archi, data, client)
+      console.log(`Connected to ${data.host}`)
 
       monitors.push(monitor)
       resolve(monitor)

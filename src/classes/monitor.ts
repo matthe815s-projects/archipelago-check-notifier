@@ -51,7 +51,7 @@ export default class Monitor {
     this.channel = discordClient.channels.cache.get(monitorData.channel) as TextBasedChannel
     this.guild = (discordClient.channels.cache.get(monitorData.channel) as GuildChannel).guild
 
-    client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, this.onJSON)
+    client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, this.onJSON.bind(this))
   }
 
   // When a message is received from the server
