@@ -1,0 +1,49 @@
+{
+  "dependencies": {
+    "archipelago.js": "^1.1.0",
+    "discord.js": "^14.13.0",
+    "mysql": "^2.18.1"
+  },
+  "name": "archipelago-check-notifier",
+  "version": "1.0.0",
+  "main": "./lib/index.js",
+  "devDependencies": {
+    "@types/mysql": "^2.15.21",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.50.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-n": "^16.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "rimraf": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build:commonjs": "rimraf lib && tsc --target es5 --outDir lib --module commonjs --declaration",
+    "build:es": "rimraf es && tsc --target es6 --outDir es --module es6",
+    "build": "npm run build:commonjs && npm run build:es",
+    "ts": "ts-node src/",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matthe815s-projects/archipelago-check-notifier.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matthe815s-projects/archipelago-check-notifier/issues"
+  },
+  "homepage": "https://github.com/matthe815s-projects/archipelago-check-notifier#readme",
+  "description": "",
+  "files": [
+    "es",
+    "lib"
+  ],
+  "types": "./lib/index.d.ts",
+  "jsnext:main": "./es/index.js",
+  "module": "./es/index.js"
+}
