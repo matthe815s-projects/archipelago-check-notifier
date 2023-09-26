@@ -9,7 +9,10 @@ export default class Monitor {
   guild: Guild
   data: MonitorData
 
-  queue: string[] = []
+  queue = {
+    hints: [] as string[],
+    items: [] as string[]
+  }
 
   convertData (message: ItemSendJSONPacket | CollectJSONPacket | HintJSONPacket) {
     return message.data.map((slot) => {
@@ -26,16 +29,35 @@ export default class Monitor {
     }).join(' ')
   }
 
-  addQueue (message: string) {
-    if (this.queue.length === 0) setTimeout(() => this.sendQueue(), 150)
-    this.queue.push(message)
+  addQueue (message: string, type: 'hints' | 'items' = 'hints') {
+    switch (type) {
+      case 'hints':
+        if (this.queue.hints.length === 0) setTimeout(() => this.sendQueue(), 150)
+        this.queue.hints.push(message)
+        break
+      case 'items':
+        if (this.queue.items.length === 0) setTimeout(() => this.sendQueue(), 150)
+        this.queue.items.push(message)
+        break
+    }
   }
 
   sendQueue () {
-    const fields = this.queue.map((message, index) => ({ name: `#${index + 1}`, value: message }))
-    this.queue = []
-    const message = new EmbedBuilder().setTitle('Hints').addFields(fields).data
-    this.channel.send({ embeds: [message] })
+    const fields = this.queue.hints.map((message, index) => ({ name: `#${index + 1}`, value: message }))
+    this.queue.hints = []
+    // split into multiple messages if there are too many items
+    while (fields.length > 0) {
+      const message = new EmbedBuilder().setTitle('Hints').addFields(fields.splice(0, 25)).data
+      this.channel.send({ embeds: [message] })
+    }
+
+    const items = this.queue.items.map((message, index) => ({ name: `#${index + 1}`, value: message }))
+    this.queue.items = []
+    // split into multiple messages if there are too many items
+    while (items.length > 0) {
+      const message = new EmbedBuilder().setTitle('Items').addFields(items.splice(0, 25)).data
+      this.channel.send({ embeds: [message] })
+    }
   }
 
   send (message: string) {
@@ -59,7 +81,7 @@ export default class Monitor {
     switch (packet.type) {
       case 'Collect':
       case 'ItemSend':
-        this.send(this.convertData(packet))
+        this.addQueue(this.convertData(packet))
         break
       case 'Hint':
         this.addQueue(this.convertData(packet))
