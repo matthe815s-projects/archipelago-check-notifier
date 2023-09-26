@@ -1,5 +1,5 @@
 import { EmbedBuilder, Guild, TextBasedChannel, Client as DiscordClient, GuildChannel } from 'discord.js'
-import { Client, CollectJSONPacket, HintJSONPacket, ItemSendJSONPacket, PrintJSONPacket, SERVER_PACKET_TYPE, SlotData } from 'archipelago.js'
+import { Client, CollectJSONPacket, HintJSONPacket, ITEMS_HANDLING_FLAGS, ItemSendJSONPacket, PrintJSONPacket, SERVER_PACKET_TYPE, SlotData } from 'archipelago.js'
 import MonitorData from './monitordata'
 import RandomHelper from '../utils/randohelper'
 
@@ -73,7 +73,23 @@ export default class Monitor {
     this.channel = discordClient.channels.cache.get(monitorData.channel) as TextBasedChannel
     this.guild = (discordClient.channels.cache.get(monitorData.channel) as GuildChannel).guild
 
+    client.addListener(SERVER_PACKET_TYPE.CONNECTION_REFUSED, this.onDisconnect.bind(this))
     client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, this.onJSON.bind(this))
+  }
+
+  onDisconnect () {
+    this.send('Disconnected from the server.')
+
+    // try to reconnect every 5 minutes
+    setInterval(() => {
+      this.client.connect({
+        game: this.data.game,
+        hostname: this.data.host,
+        port: this.data.port,
+        name: this.data.player,
+        items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL
+      })
+    }, 300000)
   }
 
   // When a message is received from the server
