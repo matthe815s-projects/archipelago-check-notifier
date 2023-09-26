@@ -30,6 +30,8 @@ export default class Monitor {
   }
 
   addQueue (message: string, type: 'hints' | 'items' = 'hints') {
+    if (this.queue.hints.length === 0 && this.queue.items.length === 0) setTimeout(() => this.sendQueue(), 150)
+
     switch (type) {
       case 'hints':
         this.queue.hints.push(message)
@@ -38,8 +40,6 @@ export default class Monitor {
         this.queue.items.push(message)
         break
     }
-
-    if (this.queue.hints.length === 0 || this.queue.items.length === 0) setTimeout(() => this.sendQueue(), 150)
   }
 
   sendQueue () {
