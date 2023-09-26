@@ -81,10 +81,10 @@ export default class Monitor {
     switch (packet.type) {
       case 'Collect':
       case 'ItemSend':
-        this.addQueue(this.convertData(packet))
+        this.addQueue(this.convertData(packet), 'items')
         break
       case 'Hint':
-        this.addQueue(this.convertData(packet))
+        this.addQueue(this.convertData(packet), 'hints')
         break
       case 'Join':
         // Overrides for special join messages
