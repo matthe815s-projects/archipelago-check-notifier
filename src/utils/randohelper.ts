@@ -23,7 +23,7 @@ function getLocation (client: Client, playerId: number, locationId: number) {
   const location = Object.entries(dataPackage.location_name_to_id).find(([, id]) => id === locationId)
   if (location === undefined) return 'Unknown Location'
 
-  return location[0]
+  return location[0] + (`${client.locations.checked[playerId]} / ${client.locations.missing[playerId] + client.locations.checked[playerId]}`)
 }
 
 const RandomHelper = {
