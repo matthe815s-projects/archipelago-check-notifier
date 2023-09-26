@@ -1,6 +1,6 @@
-import { Client, GamePackage } from 'archipelago.js'
+import { Client, GamePackage, ITEM_FLAGS } from 'archipelago.js'
 
-function getItem (client: Client, playerId: number, itemId: number): string {
+function getItem (client: Client, playerId: number, itemId: number, flag: number): string {
   const game: string | undefined = client.players.get(playerId)?.game
   if (game === undefined) return 'Unknown Item'
 
@@ -10,7 +10,16 @@ function getItem (client: Client, playerId: number, itemId: number): string {
   const item = Object.entries(dataPackage.item_name_to_id).find(([, id]) => id === itemId)
   if (item === undefined) return 'Unknown Item'
 
-  return item[0]
+  switch (flag) {
+    case ITEM_FLAGS.PROGRESSION:
+      return `**${item[0]}**`
+    case ITEM_FLAGS.NEVER_EXCLUDE:
+      return `*${item[0]}*`
+    case ITEM_FLAGS.TRAP:
+      return `~~${item[0]}~~`
+    default:
+      return item[0]
+  }
 }
 
 function getLocation (client: Client, playerId: number, locationId: number) {
