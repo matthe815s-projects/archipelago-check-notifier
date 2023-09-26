@@ -20,7 +20,7 @@ export default class Monitor {
         case 'player_id':
           return `**${this.client.players.get(parseInt(slot.text))?.name}**`
         case 'item_id':
-          return `*${RandomHelper.getItem(this.client, slot.player, parseInt(slot.text))}*`
+          return `*${RandomHelper.getItem(this.client, slot.player, parseInt(slot.text), slot.flags)}*`
         case 'location_id':
           return `**${RandomHelper.getLocation(this.client, slot.player, parseInt(slot.text))}**`
         default:
