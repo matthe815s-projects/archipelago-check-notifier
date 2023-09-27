@@ -9,6 +9,8 @@ export default class Monitor {
   guild: Guild
   data: MonitorData
 
+  isReconnecting: boolean
+
   queue = {
     hints: [] as string[],
     items: [] as string[]
@@ -80,16 +82,17 @@ export default class Monitor {
   onDisconnect () {
     this.send('Disconnected from the server.')
 
+    if (this.isReconnecting) return
+    this.isReconnecting = true
+
     // try to reconnect every 5 minutes
-    setInterval(() => {
-      this.client.connect({
-        game: this.data.game,
-        hostname: this.data.host,
-        port: this.data.port,
-        name: this.data.player,
-        items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL
-      })
-    }, 300000)
+    this.client.connect({
+      game: this.data.game,
+      hostname: this.data.host,
+      port: this.data.port,
+      name: this.data.player,
+      items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL
+    }).then(() => { this.isReconnecting = false }).catch(() => { setTimeout(() => { this.isReconnecting = false; this.onDisconnect() }, 300000) })
   }
 
   // When a message is received from the server
