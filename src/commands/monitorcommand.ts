@@ -23,7 +23,7 @@ export default class MonitorCommand extends Command {
 
   validate (interaction: CommandInteraction) {
     // test data 2 for proper URL
-    const host = interaction.options.data[2].value as string
+    const host = interaction.options.data[0].value as string
 
     // regex for domain or IP address - eg. archipelago.gg
     const hostRegex = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/
