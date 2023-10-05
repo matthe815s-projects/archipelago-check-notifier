@@ -25,8 +25,8 @@ export default class MonitorCommand extends Command {
     // test data 2 for proper URL
     const host = interaction.options.data[2].value as string
 
-    // regex for domain or IP
-    const hostRegex = /^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.)+[a-z]{2,}$/i
+    // regex for domain or IP address - eg. archipelago.gg
+    const hostRegex = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/
     if (!hostRegex.test(host)) { interaction.reply('Invalid host name format. Please use domain name (e.g: archipelago.gg)'); return false }
 
     // test data 4 for proper channel
